@@ -1,50 +1,60 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View,TextInput,Button } from 'react-native';
+import React,{useState} from 'react';
+import { StyleSheet, Text, View,TextInput,Button,ScrollView } from 'react-native';
 
 export default class App extends React.Component {
   constructor(){
     super()
-      this.state={
-        userInput:'',
-        goals:[]
-      }
-    
+    this.state={
+      user:'',
+      goal:[]
+    }
   }
+ 
 
-  goalInputHandler=text=>{
-    this.setState({
-      userInput:text
-    })
-  }
+ addInputHandler=(text)=>{
+   this.setState({
+    user:text
+   })
+ }
 
-  addGoalHandler=()=>{
+ addGoalHandler=()=>{
+   console.log(this.state.user)
+   this.setState({
+     goal:[...this.state.goal,this.state.user]
+   })
+ }
+  
 
-  }
-
-  render(){
+ render(){
+ console.log(this.state.goal);
   return (
     <View style={styles.container}>
        <View style={styles.InputContainer}>
-           <TextInput 
-            placeholder="Enter a Goal" 
-            style={styles.input}
-            onChangeText={this.goalInputHandler}
-            value={this.state.userInput}
+          <TextInput 
+             placeholder="Enter Goal"
+             style={styles.input}
+             onChangeText={this.addInputHandler}
+             value={this.state.text}
             />
           <Button 
-            title="Add" 
-            color="purple"
-            onPress={this.addGoalHandler}
-            />
+             title='Add' 
+             color="purple" 
+             onPress={this.addGoalHandler}
+             />
        </View>
-       <View>
-
-       </View>
+       <ScrollView>
+            {this.state.goal.map(goal=>{
+            <View key={goal} style={styles.listItem}>
+            <Text >{goal}</Text>
+            </View>
+            })}
+       </ScrollView>
     </View>
   );
 }
 }
+
 
 const styles = StyleSheet.create({
   container:{
@@ -59,5 +69,12 @@ const styles = StyleSheet.create({
     borderWidth:1,
     padding:10,
     width:'80%'
+    },
+    listItem:{
+      padding:10,
+      marginVertical:10,
+      backgroundColor:'#ccc',
+      borderColor:'black',
+      borderWidth:1
     }
 });
