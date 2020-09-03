@@ -1,80 +1,69 @@
-import { StatusBar } from 'expo-status-bar';
-import React,{useState} from 'react';
-import { StyleSheet, Text, View,TextInput,Button,ScrollView } from 'react-native';
-
-export default class App extends React.Component {
-  constructor(){
-    super()
-    this.state={
-      user:'',
-      goal:[]
-    }
+import React,{Component} from 'react';
+import {View,Text,StyleSheet,Button,TextInput,ScrollView,FlatList} from 'react-native';
+import GoalItem from './components/GoalItem';
+import GoalInput from './components/GoalInput';
+class App extends Component{
+constructor(){
+  super();
+  this.state={
+    user:'',
+    goal:[],
+    managed:false
   }
- 
+}
 
- addInputHandler=(text)=>{
-   this.setState({
+
+handleInputChange=text=>{
+  this.setState({
     user:text
-   })
- }
-
- addGoalHandler=()=>{
-   console.log(this.state.user)
-   this.setState({
-     goal:[...this.state.goal,this.state.user]
-   })
- }
-  
-
- render(){
- console.log(this.state.goal);
-  return (
-    <View style={styles.container}>
-       <View style={styles.InputContainer}>
-          <TextInput 
-             placeholder="Enter Goal"
-             style={styles.input}
-             onChangeText={this.addInputHandler}
-             value={this.state.text}
-            />
-          <Button 
-             title='Add' 
-             color="purple" 
-             onPress={this.addGoalHandler}
-             />
-       </View>
-       <ScrollView>
-            {this.state.goal.map(goal=>{
-            <View key={goal} style={styles.listItem}>
-            <Text >{goal}</Text>
-            </View>
-            })}
-       </ScrollView>
-    </View>
-  );
-}
+  })
 }
 
 
-const styles = StyleSheet.create({
-  container:{
-    padding:50
-  },
-    InputContainer:{
-    flexDirection:'row',
-    justifyContent:'space-between',
-    alignItems:'center'
-  },
-    input:{borderColor:'black',
-    borderWidth:1,
-    padding:10,
-    width:'80%'
-    },
-    listItem:{
-      padding:10,
-      marginVertical:10,
-      backgroundColor:'#ccc',
-      borderColor:'black',
-      borderWidth:1
-    }
-});
+AddGoalHandler=()=>{
+  this.setState({
+    goal:[...this.state.goal,{key:Math.floor(Math.random().toString() *10),value:this.state.user}]
+  })
+}
+
+DeleteItemHandler=(id)=>{
+  const remove=this.state.goal.filter(goal=>goal.id !== id)
+  this.setState({
+    goal:remove
+  })
+}
+
+
+
+
+
+  render(){
+    console.log(this.state.goal)
+  return(
+   <View style={styles.container}>
+     <GoalInput
+       visible={this.state.managed}
+       handleInputChange={this.handleInputChange}
+       user={this.state.user}
+       AddGoalHandler={this.AddGoalHandler}
+     />
+       <FlatList
+         keyExtractor={(item,index)=>item.id}
+         data={this.state.goal}
+         renderItem={(itemData)=><GoalItem 
+          title={itemData.item.value} 
+           DeleteItemHandler={this.DeleteItemHandler.bind(this,id)}
+         />}
+       />
+   </View>
+  )
+}
+}
+
+const styles=StyleSheet.create({
+ container:{
+   padding:50
+ }
+})
+
+export default App;
